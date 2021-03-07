@@ -81,12 +81,12 @@ namespace BrilliantDB
 		template<class T> std::vector<TableInfo> GetTableInfo() const;
 
 		template<class U, class... Us>
-		auto Execute(const PreparedStatement<GetStatement<U, Us...>>& stmt) const
+		std::optional<U> Execute(const PreparedStatement<GetStatement<U, Us...>>& stmt) const
 		{
 			switch (sqlite3_step(stmt.pStmt))
 			{
 			case SQLITE_DONE:
-				return std::optional<U>();
+				return std::nullopt;
 			case SQLITE_ROW:
 				return Build<U>(stmt, Db_Impl<Ts...>::template GetTable<U>().tCols);
 			default:
